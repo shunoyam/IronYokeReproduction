@@ -1,0 +1,2 @@
+# IronYokeReproduction
+鉄ヨークのつくる磁場を線輪電流で再現近似するプログラム
