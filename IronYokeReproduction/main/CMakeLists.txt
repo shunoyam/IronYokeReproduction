@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.12)
-project(it)
+project(run)
 
 set(CMAKE_CXX_STANDARD 17)
 #If C++14 is not available in your environment, specify 14 instead. 
@@ -23,7 +23,7 @@ include_directories(../src/eigen3)
 #path to eigen
 
 set(HEADER_FILES
-  ../data/LoadConfigFile.hpp
+  ../function/LoadConfigFile.hpp
 
   ../function/UsefulFunctions.hpp
   ../function/cpp17.hpp
@@ -37,12 +37,13 @@ set(HEADER_FILES
   ../src/class/cb/cb.hpp 
   ../src/class/Bs/Bs.hpp
 
+  ../function/Axisymmetrize3dOperaMap.hpp
   ../function/ConsistencyCheck.hpp
   ../function/ReproduceIronYoke.hpp
   )
 
 set(SOURCE_FILES
-  ../data/LoadConfigFile.cpp
+  ../function/LoadConfigFile.cpp
 
   ../function/UsefulFunctions.cpp
   ../function/cpp17.cpp
@@ -56,14 +57,15 @@ set(SOURCE_FILES
   ../src/class/cb/cb.cpp 
   ../src/class/Bs/Bs.cpp
 
+  ../function/Axisymmetrize3dOperaMap.cpp
   ../function/ConsistencyCheck.cpp
   ../function/ReproduceIronYoke.cpp
 
   ../main/main.cpp
   )
 
-add_executable(it ${HEADER_FILE} ${SOURCE_FILES})
-target_link_libraries(it ${ROOT_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(run ${HEADER_FILE} ${SOURCE_FILES})
+target_link_libraries(run ${ROOT_LIBRARIES} ${Boost_LIBRARIES})
 
 
 

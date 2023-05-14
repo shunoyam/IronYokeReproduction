@@ -60,17 +60,12 @@ void ConsistencyCheck(string ifn_AxisymmetrizedFieldMap, string ofn_root){
       max_CurrentDensity = *max_element(CurrentDensity_vec.begin(),
                                       CurrentDensity_vec.end());
       cout<<"max of reproduced current density: ";
-      cout<<max_CurrentDensity/1.e6 << "[A/m]" << endl;
+      cout<<max_CurrentDensity << "[A/m]" << endl;
 
-      Bs B_error;
-      B_error=B_target;
+      Bs B_error = B_target;
       B_error.subtract(IronYoke);
-      double min_B_error=B_error.min('z');// [T]
-      double max_B_error=B_error.max('z');// [T]
-      p2p = max_B_error - min_B_error;// [T]
-      cout<<"reproduced with the accuracy of "<<p2p*1.e4<<"[Gauss]"<<endl;
-      cout<<"minimum of error Bz :"<<min_B_error*1.e4<<"[Gauss]"<<endl;
-      cout<<"maximum of error Bz :"<<max_B_error*1.e4<<"[Gauss]"<<endl;
+      double max_error = B_error.max("Bz");
+      cout<<"reproduced with the accuracy of "<<max_error*1.e4<<"[Gauss]"<<endl;
       tree -> Fill();
       if(max_CurrentDensity>threshold_current_density){
           break;
@@ -124,13 +119,12 @@ void DrawMagneticField_TsukubaSolenoid(cb FLCs_IronYoke,cb Coil,TCanvas* c,
   }
 
   //get scan points
-  int mesh_r=n_scan_RadialDirection_OPERA;//14;
-  int mesh_z=n_scan_AxialDirection_OPERA;//69;
+  int mesh_r = n_scan_RadialDirection_OPERA;
+  int mesh_z = n_scan_AxialDirection_OPERA;
 
-  double r_width=(r_out-r_in)/2.;
-  double r_margin = r_width / (double)mesh_r / 2.;
+  double r_width = (r_out-r_in) / 2.;
+  double r_margin = r_width / (double)mesh_r;
   double z_margin = z_out / (double)mesh_z;
-
   auto h_all = new TH2D("h_all",
                         "B_{all} [Gauss];x[cm];z[cm]",
                         mesh_r, (r_in-r_margin)*100., (r_out+r_margin)*100.,
@@ -233,7 +227,8 @@ void cb::SetTsukubaSolenoid()
   cb MainCoil;
   MainCoil.SetOnGaussNodes(center_r_main, HalfWidth_r_main,
                            NodeNumberForGaussianQuadrature,
-                           0.,HeightOfMainCoil/2., NodeNumberForGaussianQuadrature,
+                           0.,FullHeightOfMainCoil/2.,
+                           NodeNumberForGaussianQuadrature,
                            CurrentDensityOfMainCoil*1.e4);
   cb::Push_Back(MainCoil);
 
@@ -245,7 +240,8 @@ void cb::SetTsukubaSolenoid()
   cb WeakCoil;
   WeakCoil.SetOnGaussNodes(center_r_weak,HalfWidth_r_weak,
                            NodeNumberForGaussianQuadrature,
-                           0.,HeightOfWeakFocusingCoil/2., NodeNumberForGaussianQuadrature,
+                           0.,FullHeightOfWeakFocusingCoil/2.,
+                           NodeNumberForGaussianQuadrature,
                            CurrentDensityOfWeakFocusingCoil*1.e4);
   cb::Push_Back(WeakCoil);
 }

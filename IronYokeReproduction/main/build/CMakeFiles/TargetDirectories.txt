@@ -1,3 +1,0 @@
-/home/shun/workspace/simulation/iinumasan/main/build/CMakeFiles/rebuild_cache.dir
-/home/shun/workspace/simulation/iinumasan/main/build/CMakeFiles/edit_cache.dir
-/home/shun/workspace/simulation/iinumasan/main/build/CMakeFiles/it.dir
