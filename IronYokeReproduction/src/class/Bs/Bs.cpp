@@ -39,8 +39,7 @@ int Bs::MFEPs(){
   return this->_B.size();
 }
 
-Bfield Bs::at(int index)
-{
+Bfield Bs::at(int index){
   int Bs_size=this->_B.size();
   if(Bs_size<index){
       cout<<"error :Check the size of Bs"<<endl;
@@ -50,8 +49,7 @@ Bfield Bs::at(int index)
   return __B;
 }
 
-void Bs::push_back(TVector3 pos,TVector3 magneticfield,double phi)
-{
+void Bs::push_back(TVector3 pos,TVector3 magneticfield,double phi){
   Bfield B_new;
   B_new.setB(magneticfield);
   B_new.setMFEP(pos);
@@ -59,8 +57,7 @@ void Bs::push_back(TVector3 pos,TVector3 magneticfield,double phi)
   this->_B.push_back(B_new);
 }
 
-double Bs::average()
-{
+double Bs::average(){
   vector<Bfield> B_TG=this->_B;
   vector<double> Bz;
   for(Bfield B:B_TG)
@@ -71,8 +68,7 @@ double Bs::average()
   return average;
 }
 
-void Bs::subtract(cb coils)
-{
+void Bs::subtract(coils coils){
   int n_MFEP=this->_B.size();
   if(n_MFEP==0)
     {
@@ -92,8 +88,7 @@ void Bs::subtract(cb coils)
     }
 }
 
-void Bs::addBs(Bs Bs_added,Bs Bs_add,double coefficient_added,double coefficient_add)
-{
+void Bs::addBs(Bs Bs_added,Bs Bs_add,double coefficient_added,double coefficient_add){
   Bs::clear();
   int size_added=Bs_added.MFEPs();
   int size_add=Bs_add.MFEPs();
@@ -104,7 +99,6 @@ void Bs::addBs(Bs Bs_added,Bs Bs_add,double coefficient_added,double coefficient
       cout<<"cannot operate addition to objects with defferent sizes"<<endl;
       return;
     }
-  //It costs much time to check all MFEPs are exactly same.
 
   for(int i_mfep=0;i_mfep<size_add;i_mfep++)
     {
@@ -115,70 +109,56 @@ void Bs::addBs(Bs Bs_added,Bs Bs_add,double coefficient_added,double coefficient
     }
 }
 
-void Bs::add_coil(cb coils,double factor)
+void Bs::add_coil(coils coils,double factor)
 {
-  double flux_add,flux_old,rho;
-  TVector3 B_add,B_old,B_new,pos;
+  double rho;
+  TVector3 B_add, B_old, B_new,pos;
   for(int i_MFEP=0;i_MFEP< this->_B.size();i_MFEP++)
     {
       pos=this->_B[i_MFEP].MFEP();
-      flux_old=this->_B[i_MFEP].flux();
-      flux_add=coils.Flux(pos);
       B_add=coils.B(pos);
       B_add*=factor;
       B_old=this->_B[i_MFEP].B();
-      this->_B[i_MFEP].setflux(flux_add+flux_old);
       B_new=B_add+B_old;
       this->_B[i_MFEP].setB(B_new);
     }
 }
 
-void Bs::clear()
-{
-  for(int i_MFEP=0;i_MFEP< this->_B.size();i_MFEP++)
-    {
+void Bs::clear(){
+  for(int i_MFEP=0;i_MFEP< this->_B.size();i_MFEP++){
       this->_B[i_MFEP].setB(TVector3(0., 0., 0.));
-      this->_B[i_MFEP].setflux(0.);
     }
 }
 
-Eigen::VectorXd Bs::Bs_eigen(string element)
-{
+Eigen::VectorXd Bs::Bs_eigen(string element){
   int n_MFEP=this->_B.size();
   Eigen::VectorXd B_eigen(n_MFEP);
-  for(int i_MFEP=0;i_MFEP<n_MFEP;i_MFEP++)
-    {
-      TVector3 B=this->_B[i_MFEP].B();
-      if(element=="Bx")
-        {
-          B_eigen(i_MFEP)=B.x();
-        }
-      if(element=="Bz")
-        {
-          B_eigen(i_MFEP)=B.z();
-        }
-      if(element=="B")
-        {
-          B_eigen(i_MFEP)=B.Mag()*(B.z()/abs(B.z()));
-        }
-      if(element=="Br")
-        {
-          TVector3 MFEP=this->_B[i_MFEP].MFEP();
-          TVector3 RadialDirection(MFEP.x(),MFEP.y(),0.);
-          double br=B.Dot(RadialDirection);
-          B_eigen(i_MFEP)=br;
-        }
+  for(int i_MFEP=0; i_MFEP<n_MFEP; i_MFEP++){
+    TVector3 B = this->_B[i_MFEP].B();
+    if(element=="Bx"){
+      B_eigen(i_MFEP) = B.x();
     }
+    if(element=="Bz"){
+      B_eigen(i_MFEP) = B.z();
+    }
+    if(element=="B"){
+      B_eigen(i_MFEP) = B.Mag() * (B.z()/abs(B.z()));
+    }
+    if(element=="Br"){
+      TVector3 MFEP = this->_B[i_MFEP].MFEP();
+      TVector3 RadialDirection(MFEP.x(), MFEP.y(), 0.);
+      double br = B.Dot(RadialDirection);
+      B_eigen(i_MFEP) = br;
+    }
+  }
   return B_eigen;
 }
 
-void Bs::Eigen_Bs(Eigen::VectorXd B_eigen)
-{
+void Bs::Eigen_Bs(Eigen::VectorXd B_eigen){
   double Bz;
   int n_Eigen=B_eigen.rows();
   int n_Bs=this->_B.size();
-  if(n_Eigen!=n_Bs)
-    {
+  if(n_Eigen!=n_Bs){
       puts("size of Eigen::vector and Bs is different");
     }
   for(int i_MFEP=0;i_MFEP<n_Eigen;i_MFEP++)
@@ -202,12 +182,11 @@ Bs::operator vector<double>()
   return _Bs_vec;
 }
 
-void Bs::Read2dFieldMap(string path_to_FieldMapFile)
-{
+void Bs::Read2dFieldMap(string path_to_FieldMapFile){
   ifstream InputFile(path_to_FieldMapFile.c_str());
   if(InputFile.fail())
     {
-      puts("MFEP data was not found.");
+      cout << path_to_FieldMapFile << " not found" << endl;
       abort;
     }
   double x, y=0., z;
@@ -215,19 +194,13 @@ void Bs::Read2dFieldMap(string path_to_FieldMapFile)
 
   while(InputFile >> x >> z >> Bz >> Br)
     {
-      // if(x/100 < 5.e-2)
-      //   {
-      //     puts("hello");
-      //     continue;
-      //   }
       TVector3 pos(x/100.,y/100.,z/100.);
       TVector3 B(Br/1.e4,By,Bz/1.e4);
       Bs::push_back(pos, B);
     }
 }
 
-void Bs::DirectionBlinding()
-{
+void Bs::DirectionBlinding(){
   for(Bfield &_b:this->_B)
     {
       _b.DirectionBlinding();
@@ -236,22 +209,19 @@ void Bs::DirectionBlinding()
 
 void Bs::out(const char* ofn_dat){
   ofstream OutputFile(ofn_dat);
-  for(Bfield b:this->_B)
-    {
-      auto mfep=b.MFEP();
-      auto B=b.B();
-      OutputFile<<mfep.x()<<"\t"<<mfep.y()<<"\t"<<mfep.z()<<"\t";
-      OutputFile<<B.x()<<"\t"<<B.y()<<"\t"<<B.z()<<endl;
-    }
+  for(Bfield b:this->_B){
+    auto mfep=b.MFEP();
+    auto B=b.B();
+    OutputFile<<mfep.x()<<"\t"<<mfep.y()<<"\t"<<mfep.z()<<"\t";
+    OutputFile<<B.x()<<"\t"<<B.y()<<"\t"<<B.z()<<endl;
+  }
 }
 
-void Bs::push_back(TVector3 mfep,int channel,double theta,TVector3 B)
-{
+void Bs::push_back(TVector3 mfep, double theta, TVector3 B){
   Bfield B_new;
   B_new.setB(B);
   B_new.setMFEP(mfep);
   B_new.settheta(theta);
-  B_new.SetChannel(channel);
   this->_B.push_back(B_new);  
 }
 

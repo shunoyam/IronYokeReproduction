@@ -4,18 +4,22 @@
 #include"../src/include.hpp"
 
 int main(){
-  //load global variables
-  string path_to_configfile = "../../data/configuration.txt";
-  LoadConfigFile(path_to_configfile);
+  
+  string path_to_ConfigurationFile = "../../data/configuration.txt";
+  string path_to_IronYokeParameter = "../../data/parameter_TsukubaIronYoke.txt";
+  string path_to_CoilInformation = "../../data/CoilList.txt";
+  string ifn_3dOPERAMap = "../../data/toSVD_876_684.table";
+  string ofn_root = "MagneticFieldDistributions.root";
+  string ofn_dat = "information_CircularCurrentLoops.dat";
 
+  ReproduceIronYoke(path_to_ConfigurationFile, path_to_IronYokeParameter,
+                    path_to_CoilInformation,
+                    ifn_3dOPERAMap, ofn_root, ofn_dat);
 
-  string path_to_OPERA3Dmap = "../../data/toSVD_876_684_noLHoles_SUS.table";
-  //  string path_to_OPERA3Dmap = "../../data/toSVD_876_684.table";
-  string OutputFileName_root = "MagneticDistributions.root";
-  string OutputFileName_dat = "CurrentDistribution.dat";
-  ReproduceIronYoke(path_to_OPERA3Dmap, OutputFileName_root, OutputFileName_dat);
 
   
+
+
   return 0;
 }
 

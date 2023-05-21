@@ -38,7 +38,7 @@
 #include<Eigen/Core>
 #include"constants.hpp"
 
-#include"../function/LoadConfigFile.hpp"
+#include"../function/LoadConfigurationFile.hpp"
 
 #include"../function/UsefulFunctions.hpp"
 #include"../function/cpp17.hpp"
@@ -49,11 +49,13 @@
 #include"class/info_SVD/info_SVD.hpp"
 #include"../function/solution_inverse_TSVD.hpp"
 #include"class/Legendre/Legendre.hpp"
-#include"class/cb/cb.hpp"
+#include"class/coils/coils.hpp"
+#include"class/CoilBlocks/CoilBlocks.hpp"
 #include"class/Bs/Bs.hpp"
 
 #include"../function/Axisymmetrize3dOperaMap.hpp"
-#include"../function/ConsistencyCheck.hpp"
+#include"../function/CreateIronYokeGeometry.hpp"
+#include"../function/DrawMagneticField_TsukubaSolenoid.hpp"
 #include"../function/ReproduceIronYoke.hpp"
 
 

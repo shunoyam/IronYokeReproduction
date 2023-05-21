@@ -1,0 +1,2 @@
+r_PoleTip      r_in_IronYoke    LowerHeight_PoleTip   InnerHeight_IronYoke 
+.01                  .3               .288                      .408

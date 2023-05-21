@@ -1,6 +1,8 @@
 
 
 #include"../../include.hpp"
+using namespace std;
+
 
 coil::coil(){ 
 }
@@ -26,6 +28,9 @@ void coil::setr(double r){
     return;
   }
   this->_r = r;
+  if(r<1.e-7){
+    this->_r = 1.e-7;
+  }
 }
 
 void coil::setz(double z){
@@ -49,26 +54,25 @@ TVector3 coil::ResponseElement(TVector3 pos_MFEP){
   //think with cylindrical coordinate
   double rho = hypot(pos_MFEP.x(), pos_MFEP.y());
   double radi = coil::r();
-  double  z_delta = pos_MFEP.z()-this->_z;
+  double  z_delta = pos_MFEP.z() - this->_z;
   //exception handling for magnetic field on the z axis
-  if (rho<1.e-8)
-    {
-      double dominator = 2*pow(pow(radi, 2)+pow(z_delta, 2), 1.5);
-      double Response_element_z = mu_0*pow(radi, 2)/dominator;
+  if (rho<1.e-8){
+      double dominator = 2*pow(pow(radi, 2) + pow(z_delta, 2), 1.5);
+      double Response_element_z = mu_0 * pow(radi, 2) / dominator;
       TVector3 _ResponseElement(0., 0., Response_element_z);
       return _ResponseElement;
     }
   //calculate a_z and a_r by polynomial approximation for elliptic integral
-  double k = (4.*radi*rho)/(pow(radi+rho, 2)+pow(z_delta, 2));
-  double coef1_z = mu_0*sqrt(k)/(4.*TMath::Pi()*sqrt(radi*rho)); 
+  double k = (4.*radi*rho)/(pow(radi+rho, 2) + pow(z_delta, 2));
+  double coef1_z = mu_0 * sqrt(k) / (4.*TMath::Pi()*sqrt(radi*rho));
   double coef2_z_nume = (pow(radi, 2)-pow(rho, 2)-pow(z_delta, 2));
   double coef2_z_domi = (pow(radi-rho, 2)+pow(z_delta, 2));
   double coef2_z = coef2_z_nume/coef2_z_domi;
-  double a_z = coef1_z*(coef2_z*elliptic_integral_2(k)+elliptic_integral_1(k)); 
+  double a_z = coef1_z * (coef2_z*ellint_2(sqrt(k), TMath::Pi()/2.)+ellint_1(sqrt(k), TMath::Pi()/2.));
   double coef1_r = mu_0*z_delta*sqrt(k)/(4.*TMath::Pi()*rho*sqrt(radi*rho));
   double coef2_r = (pow(radi, 2)+pow(rho, 2)+pow(z_delta, 2))/(pow(radi-rho, 2)+pow(z_delta, 2));
-  double a_r = coef1_r*(coef2_r*elliptic_integral_2(k)-elliptic_integral_1(k));
- 
+  double a_r = coef1_r*(coef2_r*ellint_2(sqrt(k), TMath::Pi()/2.)-ellint_1(sqrt(k), TMath::Pi()/2.));
+
   //from a_z and a_r to 3D
   TVector3 _Response_element(a_r*pos_MFEP.x()/rho, a_r*pos_MFEP.y()/rho, a_z);
   return _Response_element;
@@ -92,8 +96,8 @@ double coil::flux (TVector3 pos_MFEP)
   double Delta = hypot(rho+this->_r, pos_MFEP.z());
   double k = 4. * this->_r * rho / pow(Delta, 2.); 
   double coef = mu_0 * this->_I * this->_r / (TMath::Pi()*Delta*k);
-  double Aphi = -coef*((k-2.)*elliptic_integral_1(k)+2.*elliptic_integral_2(k));
-  double flux = 2.*TMath::Pi()*rho*Aphi;
+  double Aphi = -coef*((k-2.)*ellint_1(k, TMath::Pi()/2.)+2.*ellint_2(k, TMath::Pi()/2.));
+  double flux = 2. * TMath::Pi() * rho * Aphi;
   return flux;
 }
 

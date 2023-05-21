@@ -27,11 +27,6 @@ void Bfield::settheta(double theta)
   this->_theta=theta;
 }
 
-void Bfield::setflux(double flux)
-{
-  this->_flux=flux;
-}
-
 TVector3 Bfield::B()
 {
   TVector3 __B=this->_B;
@@ -69,40 +64,12 @@ double Bfield::theta()
   return _theta;
 }
 
-double Bfield::flux()
-{
-  double flux=this->_flux;
-  return flux;
-}
-
 void Bfield::DirectionBlinding()
 {
   double magnitude=sqrt(this->_B.Mag2());
   this->_B.SetXYZ(0.,0.,magnitude);
 }
 
-void Bfield::SetChannel(int channel)
-{
-  _channel=channel;
-}
-
-int Bfield::channel()
-{
-  return _channel;
-}
-
-string Bfield::UpperOrLower()
-{
-  if(_channel==0 or _channel==1 or _channel==2)
-    {
-      return "lower";
-    }
-  if(_channel==3 or _channel==4)
-    {
-      return "upper";
-    }
-  return "error";
-}
 
 
 
